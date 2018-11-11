@@ -57,9 +57,12 @@ app.post("/habits", (req, res) => {
 
 app.get("/days/:habitName", (req, res) => {
   console.log(req.params);
-  knex("days").where({ habitName: req.params.habitName }).then(rows => {
+  knex("days").first().where({ habitName: req.params.habitName }).then(rows => {
     rows = JSON.stringify(rows);
     res.send({ rows });
+  }).catch(err => {
+    res.send("Failed to get days!");
+    console.log("Error!", err);
   });
 });
 
