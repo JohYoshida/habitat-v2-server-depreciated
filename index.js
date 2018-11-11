@@ -7,6 +7,8 @@ const app = express();
 const dbconfig = require("./knexfile.js")[process.env.DB_ENV];
 const knex = require("knex")(dbconfig);
 
+// parse application/json
+app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
   res.send("Habitat server");
