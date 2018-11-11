@@ -55,6 +55,10 @@ app.post("/habits", (req, res) => {
   });
 });
 
+app.delete("/habits", (req, res) => {
+  console.log(req.body);
+});
+
 app.get("/days/:habitName", (req, res) => {
   console.log(req.params);
   knex("days").first().where({ habitName: req.params.habitName }).then(rows => {
