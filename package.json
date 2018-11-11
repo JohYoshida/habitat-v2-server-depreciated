@@ -4,6 +4,7 @@
   "description": "Webserver for my Habitat expo app",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,9 +18,14 @@
   },
   "homepage": "https://github.com/JohYoshida/habitat-server#readme",
   "dependencies": {
+    "bcrypt": "^3.0.2",
     "dotenv": "^6.0.0",
     "express": "^4.16.3",
     "knex": "^0.15.2",
-    "pg": "^7.4.3"
+    "moment": "^2.22.2",
+    "pg": "^7.4.3",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2",
+    "uuid": "^3.3.2"
   }
 }
