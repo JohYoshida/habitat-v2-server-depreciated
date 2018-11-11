@@ -39,7 +39,7 @@ app.post("/habits", (req, res) => {
     id = uuid();
     knex("yearlyHabits").insert(
       { id,
-        name: req.body.name,
+        habit: req.body.name,
         year: 2018,
         jan: "0000000000000000000000000000000",
         feb: "00000000000000000000000000000",
