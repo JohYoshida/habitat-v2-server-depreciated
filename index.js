@@ -23,11 +23,21 @@ app.get("/test", (req, res) => {
     res.send(rows[0]);
   }).catch(err => {
     res.send("Failed to get users")
-  })
+    console.log("Error!", err);
+  });
 });
 
+app.get("/habits", (req, res) => {
+  knex("habits").then(rows => {
+    rows = JSON.stringify(rows);
+    res.send(rows);
+  }).catch(err => {
+    res.send("Failed to get habits!");
+    console.log("Error!", err);
+  })
+})
+
 app.post("/add-habit", (req, res) => {
-  console.log(req.body);
   const now = moment().format();
   const id = uuid();
   knex("habits").insert({
