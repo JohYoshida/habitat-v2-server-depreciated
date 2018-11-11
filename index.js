@@ -36,7 +36,7 @@ app.post("/add-habit", (req, res) => {
     name: req.body.name,
     createdAt: now,
     modifiedAt: now,
-  }).then(res => {
+  }).then(() => {
     res.send({
       msg: `Created new habit "${req.body.name}"`,
       habit: {
