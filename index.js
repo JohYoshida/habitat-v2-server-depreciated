@@ -47,16 +47,19 @@ app.post("/habits", (req, res) => {
     createdAt: now,
     modifiedAt: now,
   }).then(() => {
-    res.send({
-      msg: `Created new habit "${req.body.name}"`,
-      habit: {
-        id,
-        user: "johyoshida@gmail.com",
-        name: req.body.name,
-        createdAt: now,
-        modifiedAt: now,
-      }
-    });
+    knex("days").insert({ habitName: req.body.name })
+      .then(() => {
+        res.send({
+          msg: `Created new habit "${req.body.name}"`,
+          habit: {
+            id,
+            user: "johyoshida@gmail.com",
+            name: req.body.name,
+            createdAt: now,
+            modifiedAt: now,
+          }
+        });
+      })
   }).catch(err => {
     console.log("Error!", err);
   });
