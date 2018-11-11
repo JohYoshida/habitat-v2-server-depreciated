@@ -59,7 +59,7 @@ app.get("/days/:habitName", (req, res) => {
   console.log(req.params);
   knex("days").where({ habitName: req.params.habitName }).then(rows => {
     rows = JSON.stringify(rows);
-    res.send({ days });
+    res.send({ rows });
   });
 });
 
