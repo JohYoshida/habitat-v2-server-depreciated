@@ -26,22 +26,7 @@ app.get("/test", (req, res) => {
 
 app.post("/habitat", (req, res) => {
   console.log(req.body);
-  res.send("Post recieved.");
+  res.send({ msg: "Post recieved." });
 })
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
-
-function test() {
-  knex("users").where({
-    email: "johyoshida@gmail.com"
-  }).then(rows => {
-    // let row = rows.json()
-    console.log(rows[0]);
-    // res.send(rows);
-  }).catch(err => {
-    console.log('failed');
-    // res.send("Failed to get users")
-  })
-}
-
-console.log(test());
