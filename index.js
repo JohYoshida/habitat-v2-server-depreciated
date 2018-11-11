@@ -65,27 +65,30 @@ app.delete("/habits", (req, res) => {
     })
 });
 
-app.get("/days/:habitName", (req, res) => {
+app.get("/habits/:habit/:year", (req, res) => {
   console.log(req.params);
-  knex("days").first().where({ habitName: req.params.habitName }).then(rows => {
-    rows = JSON.stringify(rows);
-    res.send({ rows });
-  }).catch(err => {
-    res.send("Failed to get days!");
-    console.log("Error!", err);
-  });
+  knex("yearlyHabits").first()
+    .where({ habit: req.params.habit, year: req.params.year })
+    .then(rows => {
+      rows = JSON.stringify(rows);
+      res.send({ rows });
+    }).catch(err => {
+      res.send("Failed to get days!");
+      console.log("Error!", err);
+    });
 });
 
-app.post("days", (req, res) => {
-  console.log(req.body);
-  knex("days").where({ habitName: req.body.habit })
-    .update({ `${req.body.day}`: completed })
-    .then(() => {
-      res.send({ msg: "Updated days." });
-    }).catch(err => {
-      res.send("Failed to update days!")
-      console.log("Error!", err);
-    })
+app.post("/habits/:habit/:year", (req, res) => {
+  console.log("body", req.body);
+  console.log("params", req.params);
+  // knex("yearlyHabits").where({ name: req.body.habit })
+  //   .update({ `${req.body.day}`: completed })
+  //   .then(() => {
+  //     res.send({ msg: "Updated days." });
+  //   }).catch(err => {
+  //     res.send("Failed to update days!")
+  //     console.log("Error!", err);
+  //   });
 });
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
