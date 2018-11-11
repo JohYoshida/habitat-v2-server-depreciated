@@ -1,5 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const moment = require("moment");
+const uuid = require("uuid/v1");
 const PORT = process.env.PORT || 4000;
 
 const app = express();
@@ -24,9 +26,30 @@ app.get("/test", (req, res) => {
   })
 });
 
-app.post("/habitat", (req, res) => {
+app.post("/add-habit", (req, res) => {
   console.log(req.body);
-  res.send({ msg: "Post recieved." });
+  const now = moment().format();
+  const id = uuid();
+  knex("habits").insert({
+    id,
+    user: "johyoshida@gmail.com",
+    name: req.body.name,
+    createdAt: now,
+    modifiedAt: now,
+  }).then(res => {
+    res.send({
+      msg: `Created new habit "${req.body.name}"`,
+      habit: {
+        id,
+        user: "johyoshida@gmail.com",
+        name: req.body.name,
+        createdAt: now,
+        modifiedAt: now,
+      }
+    });
+  }).catch(err => {
+    console.log("Error!", err);
+  });
 })
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
