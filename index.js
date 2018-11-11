@@ -53,6 +53,14 @@ app.post("/habits", (req, res) => {
   }).catch(err => {
     console.log("Error!", err);
   });
-})
+});
+
+app.get("/days/:habitName", (req, res) => {
+  console.log(req.params);
+  knex("days").where({ habitName: req.params.habitName }).then(rows => {
+    rows = JSON.stringify(rows);
+    res.send({ msg: "yes", days: rows });
+  });
+});
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
