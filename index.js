@@ -57,7 +57,7 @@ app.post("/habits", (req, res) => {
 
 app.delete("/habits", (req, res) => {
   console.log(req.body);
-  knex("habits").where({ habitName: req.body.name }).del()
+  knex("habits").where({ name: req.body.name }).del()
     .then(res => {
       res.send({ msg: `Deleted habit ${req.body.name}`});
     }).catch(err => {
