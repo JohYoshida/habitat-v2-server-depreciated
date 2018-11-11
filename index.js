@@ -28,7 +28,7 @@ app.get("/habits", (req, res) => {
 
 app.post("/habits", (req, res) => {
   const now = moment().format();
-  const id = uuid();
+  let id = uuid();
   knex("habits").insert({
     id,
     user: "johyoshida@gmail.com",
@@ -36,7 +36,8 @@ app.post("/habits", (req, res) => {
     createdAt: now,
     modifiedAt: now,
   }).then(() => {
-    knex("days").insert({ habitName: req.body.name })
+    id = uuid();
+    knex("days").insert({ id, habitName: req.body.name })
       .then(() => {
         res.send({
           msg: `Created new habit "${req.body.name}"`,
