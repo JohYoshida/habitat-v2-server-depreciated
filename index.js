@@ -1,8 +1,8 @@
 const express = require("express");
+const bodyParser = require("body-parser");
 const PORT = process.env.PORT || 4000;
 
 const app = express();
-const bodyParser = require("body-parser");
 
 const dbconfig = require("./knexfile.js")[process.env.DB_ENV];
 const knex = require("knex")(dbconfig);
@@ -28,3 +28,18 @@ app.post("/habitat", (req, res) => {
 })
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
+
+function test() {
+  knex("users").where({
+    email: "johyoshida@gmail.com"
+  }).then(rows => {
+    // let row = rows.json()
+    console.log(rows[0]);
+    // res.send(rows);
+  }).catch(err => {
+    console.log('failed');
+    // res.send("Failed to get users")
+  })
+}
+
+console.log(test());
