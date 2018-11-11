@@ -16,17 +16,6 @@ app.get("/", (req, res) => {
   res.send("Habitat server");
 });
 
-app.get("/test", (req, res) => {
-  knex("users").where({
-    email: "johyoshida@gmail.com"
-  }).then(rows => {
-    res.send(rows[0]);
-  }).catch(err => {
-    res.send("Failed to get users")
-    console.log("Error!", err);
-  });
-});
-
 app.get("/habits", (req, res) => {
   knex("habits").then(rows => {
     rows = JSON.stringify(rows);
