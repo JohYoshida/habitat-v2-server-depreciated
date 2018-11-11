@@ -76,4 +76,16 @@ app.get("/days/:habitName", (req, res) => {
   });
 });
 
+app.post("days", (req, res) => {
+  console.log(req.body);
+  knex("days").where({ habitName: req.body.habit })
+    .update({ `${req.body.day}`: completed })
+    .then(() => {
+      res.send({ msg: "Updated days." });
+    }).catch(err => {
+      res.send("Failed to update days!")
+      console.log("Error!", err);
+    })
+});
+
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
