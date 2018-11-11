@@ -37,7 +37,7 @@ app.get("/habits", (req, res) => {
   })
 })
 
-app.post("/add-habit", (req, res) => {
+app.post("/habits", (req, res) => {
   const now = moment().format();
   const id = uuid();
   knex("habits").insert({
