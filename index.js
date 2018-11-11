@@ -12,7 +12,9 @@ app.get("/", (req, res) => {
 });
 
 app.get("/test", (req, res) => {
-  knex("users").then(rows => {
+  knex("users").where({
+    email: "johyoshida@gmail.com"
+  }).then(rows => {
     res.send(rows);
   }).catch(err => {
     res.send("Failed to get users")
