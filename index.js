@@ -16,6 +16,7 @@ app.get("/", (req, res) => {
   res.send("Habitat server");
 });
 
+// Return an array of habits
 app.get("/habits", (req, res) => {
   knex("habits").then(rows => {
     rows = JSON.stringify(rows);
@@ -26,6 +27,8 @@ app.get("/habits", (req, res) => {
   })
 })
 
+// Post a new habit
+// TODO: Change hardcoded user
 app.post("/habits", (req, res) => {
   const now = moment().format();
   let id = uuid();
@@ -37,40 +40,41 @@ app.post("/habits", (req, res) => {
     modifiedAt: now,
   }).then(() => {
     id = uuid();
-    knex("yearlyHabits").insert(
-      { id,
-        habit: req.body.name,
-        year: 2018,
-        jan: "0000000000000000000000000000000",
-        feb: "00000000000000000000000000000",
-        mar: "0000000000000000000000000000000",
-        apr: "000000000000000000000000000000",
-        may: "0000000000000000000000000000000",
-        jun: "001000000000000000000000000000",
-        jul: "0000000000000000000000000000000",
-        aug: "0000000000000000000000000000000",
-        sep: "000000000000000000000000000000",
-        oct: "0000000000000000000000000000000",
-        nov: "000000000000000000000000000000",
-        dec: "0000000000000000000000000000000",
-      })
-      .then(() => {
-        res.send({
-          msg: `Created new habit "${req.body.name}"`,
-          habit: {
-            id,
-            user: "johyoshida@gmail.com",
-            name: req.body.name,
-            createdAt: now,
-            modifiedAt: now,
-          }
-        });
-      })
+    knex("yearlyHabits").insert({
+      id,
+      habit: req.body.name,
+      year: 2018,
+      jan: "0000000000000000000000000000000",
+      feb: "00000000000000000000000000000",
+      mar: "0000000000000000000000000000000",
+      apr: "000000000000000000000000000000",
+      may: "0000000000000000000000000000000",
+      jun: "001000000000000000000000000000",
+      jul: "0000000000000000000000000000000",
+      aug: "0000000000000000000000000000000",
+      sep: "000000000000000000000000000000",
+      oct: "0000000000000000000000000000000",
+      nov: "000000000000000000000000000000",
+      dec: "0000000000000000000000000000000",
+    }).then(() => {
+      res.send({
+        msg: `Created new habit "${req.body.name}"`,
+        habit: {
+          id,
+          user: "johyoshida@gmail.com",
+          name: req.body.name,
+          createdAt: now,
+          modifiedAt: now,
+        }
+      });
+    })
   }).catch(err => {
+    res.send("Failed to create habit!");
     console.log("Error!", err);
   });
 });
 
+// Delete a habit
 app.delete("/habits", (req, res) => {
   console.log(req.body);
   knex("habits").where({ name: req.body.name }).del()
@@ -81,6 +85,7 @@ app.delete("/habits", (req, res) => {
     })
 });
 
+// Return a habit calendar
 app.get("/habits/:habit/:year", (req, res) => {
   console.log(req.params);
   knex("yearlyHabits").first()
@@ -94,6 +99,7 @@ app.get("/habits/:habit/:year", (req, res) => {
     });
 });
 
+// Update a habit calendar
 app.post("/habits/:habit/:year", (req, res) => {
   console.log("body", req.body);
   console.log("params", req.params);
