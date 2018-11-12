@@ -1,7 +1,7 @@
 
 exports.up = function(knex, Promise) {
   return Promise.all([
-    knex.schema.createTable("yearlyHabits", table => {
+    knex.schema.createTable("habitCalendars", table => {
       table.uuid("id").primary();
       table.string("habit");
       table.integer("year");
@@ -23,6 +23,6 @@ exports.up = function(knex, Promise) {
 
 exports.down = function(knex, Promise) {
   return Promise.all([
-    knex.schema.dropTableIfExists("yearlyHabits"),
+    knex.schema.dropTableIfExists("habitCalendars"),
   ]);
 };

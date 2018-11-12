@@ -40,7 +40,7 @@ app.post("/habits", (req, res) => {
     modifiedAt: now,
   }).then(() => {
     id = uuid();
-    knex("yearlyHabits").insert({
+    knex("habitCalendars").insert({
       id,
       habit: req.body.name,
       year: 2018,
@@ -88,7 +88,7 @@ app.delete("/habits", (req, res) => {
 // Return a habit calendar
 app.get("/habits/:habit/:year", (req, res) => {
   console.log(req.params);
-  knex("yearlyHabits").first()
+  knex("habitCalendars").first()
     .where({ habit: req.params.habit, year: req.params.year })
     .then(rows => {
       rows = JSON.stringify(rows);
@@ -103,7 +103,7 @@ app.get("/habits/:habit/:year", (req, res) => {
 app.post("/habits/:habit/:year", (req, res) => {
   console.log("body", req.body);
   console.log("params", req.params);
-  // knex("yearlyHabits").where({ name: req.body.habit })
+  // knex("habitCalendars").where({ name: req.body.habit })
   //   .update({ `${req.body.day}`: completed })
   //   .then(() => {
   //     res.send({ msg: "Updated days." });

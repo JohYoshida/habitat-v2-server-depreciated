@@ -6,8 +6,8 @@ const id3 = uuid();
 
 exports.seed = function(knex, Promise) {
   // Deletes ALL existing entries
-  return knex("yearlyHabits").del().then(() => {
-    return knex("yearlyHabits").insert([
+  return knex("habitCalendars").del().then(() => {
+    return knex("habitCalendars").insert([
       {
         id: id1,
         habit: "Drink water",
