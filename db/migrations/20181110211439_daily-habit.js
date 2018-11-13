@@ -5,18 +5,18 @@ exports.up = function(knex, Promise) {
       table.uuid("id").primary();
       table.string("habit");
       table.integer("year");
-      table.string("jan");
-      table.string("feb");
-      table.string("mar");
-      table.string("apr");
-      table.string("may");
-      table.string("jun");
-      table.string("jul");
-      table.string("aug");
-      table.string("sep");
-      table.string("oct");
-      table.string("nov");
-      table.string("dec");
+      table.string("Jan");
+      table.string("Feb");
+      table.string("Mar");
+      table.string("Apr");
+      table.string("May");
+      table.string("Jun");
+      table.string("Jul");
+      table.string("Aug");
+      table.string("Sep");
+      table.string("Oct");
+      table.string("Nov");
+      table.string("Dec");
     }),
   ])
 };
