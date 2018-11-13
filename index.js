@@ -131,16 +131,16 @@ app.post("/habits/:habit/:year", (req, res) => {
           Dec: rows["Dec"],
         }).then(updated => {
           if (updated) {
-            res.send("Updated successfully")
+            res.send({msg: "Updated successfully"})
           } else {
-            res.send("Failed to update")
+            res.send({msg: "Failed to update"})
           }
         }).catch(err => {
-          res.send("Failed to update!");
+          res.send({msg: "Failed to update!"});
           console.log("Error!", err);
         });
     }).catch(err => {
-      res.send("Failed to get days!");
+      res.send({msg: "Failed to get days!"});
       console.log("Error!", err);
     });
 });
