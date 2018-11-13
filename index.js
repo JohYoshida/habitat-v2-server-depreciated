@@ -94,23 +94,56 @@ app.get("/habits/:habit/:year", (req, res) => {
       rows = JSON.stringify(rows);
       res.send({ rows });
     }).catch(err => {
-      res.send("Failed to get days!");
+      res.send("Failed to get habit calendar!");
       console.log("Error!", err);
     });
 });
 
 // Update a habit calendar
 app.post("/habits/:habit/:year", (req, res) => {
-  console.log("body", req.body);
-  console.log("params", req.params);
-  // knex("habitCalendars").where({ name: req.body.habit })
-  //   .update({ `${req.body.day}`: completed })
-  //   .then(() => {
-  //     res.send({ msg: "Updated days." });
-  //   }).catch(err => {
-  //     res.send("Failed to update days!")
-  //     console.log("Error!", err);
-  //   });
+  let { habit, year } = req.params;
+  let { day, completed } = req.body;
+  const month = day.split("-")[0];
+  day = day.split("-")[1];
+  year = Number(year);
+  knex("habitCalendars").first().where({ habit, year })
+    .then(rows => {
+      let old = rows[month];
+      let new = "";
+      if (completed) {
+        new = old.substr(0, day - 1) + "1" + old.substr(day);
+      } else {
+        new = old.substr(0, day - 1) + "0" + old.substr(day);
+      }
+      rows[month] = new;
+      knex("habitCalendars").first().where({ habit, year })
+        .update({
+          Jan: rows["Jan"],
+          Feb: rows["Feb"],
+          Mar: rows["Mar"],
+          Apr: rows["Apr"],
+          May: rows["May"],
+          Jun: rows["Jun"],
+          Jul: rows["Jul"],
+          Aug: rows["Aug"],
+          Sep: rows["Sep"],
+          Oct: rows["Oct"],
+          Nov: rows["Nov"],
+          Dec: rows["Dec"],
+        }).then(updated => {
+          if (updated) {
+            res.send("Updated successfully")
+          } else {
+            res.send("Failed to update")
+          }
+        }).catch(err => {
+          res.send("Failed to update!");
+          console.log("Error!", err);
+        });
+    }).catch(err => {
+      res.send("Failed to get days!");
+      console.log("Error!", err);
+    });
 });
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
