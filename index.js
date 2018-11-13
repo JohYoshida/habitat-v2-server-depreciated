@@ -32,17 +32,19 @@ app.get("/habits", (req, res) => {
 app.post("/habits", (req, res) => {
   const now = moment().format();
   let id = uuid();
+  const { name, color } = req.body;
   knex("habits").insert({
     id,
     user: "johyoshida@gmail.com",
-    name: req.body.name,
+    name,
+    color,
     createdAt: now,
     modifiedAt: now,
   }).then(() => {
     id = uuid();
     knex("habitCalendars").insert({
       id,
-      habit: req.body.name,
+      habit: name,
       year: 2018,
       Jan: "0000000000000000000000000000000",
       Feb: "00000000000000000000000000000",
@@ -58,11 +60,12 @@ app.post("/habits", (req, res) => {
       Dec: "0000000000000000000000000000000",
     }).then(() => {
       res.send({
-        msg: `Created newData habit "${req.body.name}"`,
+        msg: `Created newData habit "${name}"`,
         habit: {
           id,
           user: "johyoshida@gmail.com",
-          name: req.body.name,
+          name,
+          color,
           createdAt: now,
           modifiedAt: now,
         }
@@ -131,9 +134,9 @@ app.post("/habits/:habit/:year", (req, res) => {
           Dec: rows["Dec"],
         }).then(updated => {
           if (updated) {
-            res.send({msg: "Updated successfully"})
+            res.send({ msg: true })
           } else {
-            res.send({msg: "Failed to update"})
+            res.send({ msg: false})
           }
         }).catch(err => {
           res.send({msg: "Failed to update!"});
