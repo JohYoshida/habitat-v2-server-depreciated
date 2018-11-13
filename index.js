@@ -58,7 +58,7 @@ app.post("/habits", (req, res) => {
       Dec: "0000000000000000000000000000000",
     }).then(() => {
       res.send({
-        msg: `Created new habit "${req.body.name}"`,
+        msg: `Created newData habit "${req.body.name}"`,
         habit: {
           id,
           user: "johyoshida@gmail.com",
@@ -87,7 +87,6 @@ app.delete("/habits", (req, res) => {
 
 // Return a habit calendar
 app.get("/habits/:habit/:year", (req, res) => {
-  console.log(req.params);
   knex("habitCalendars").first()
     .where({ habit: req.params.habit, year: req.params.year })
     .then(rows => {
@@ -109,13 +108,13 @@ app.post("/habits/:habit/:year", (req, res) => {
   knex("habitCalendars").first().where({ habit, year })
     .then(rows => {
       let old = rows[month];
-      let new = "";
+      let newData = "";
       if (completed) {
-        new = old.substr(0, day - 1) + "1" + old.substr(day);
+        newData = old.substr(0, day - 1) + "1" + old.substr(day);
       } else {
-        new = old.substr(0, day - 1) + "0" + old.substr(day);
+        newData = old.substr(0, day - 1) + "0" + old.substr(day);
       }
-      rows[month] = new;
+      rows[month] = newData;
       knex("habitCalendars").first().where({ habit, year })
         .update({
           Jan: rows["Jan"],
