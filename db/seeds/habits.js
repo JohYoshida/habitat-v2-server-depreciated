@@ -14,6 +14,7 @@ exports.seed = function(knex, Promise) {
       id: id1,
       user: "johyoshida@gmail.com",
       name: "Drink water",
+      color: "red",
       createdAt: now,
       modifiedAt: now,
     },
@@ -21,6 +22,7 @@ exports.seed = function(knex, Promise) {
       id: id2,
       user: "johyoshida@gmail.com",
       name: "Stretch",
+      color: "blue",
       createdAt: now,
       modifiedAt: now,
     },
@@ -28,6 +30,7 @@ exports.seed = function(knex, Promise) {
       id: id3,
       user: "johyoshida@gmail.com",
       name: "Practice coding",
+      color: "green",
       createdAt: now,
       modifiedAt: now,
     }])

@@ -11,6 +11,7 @@ exports.up = function(knex, Promise) {
       table.uuid("id").primary();
       table.string("user");
       table.string("name");
+      table.string("color");
       table.string("createdAt");
       table.string("modifiedAt");
     }),
