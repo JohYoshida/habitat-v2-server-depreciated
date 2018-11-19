@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const bcrypt = require("bcrypt");
 const moment = require("moment");
 const uuid = require("uuid/v1");
 const PORT = process.env.PORT || 4000;
@@ -165,6 +166,33 @@ app.post("/habits/:habit/:year", (req, res) => {
     .catch(err => {
       res.send({ msg: "Failed to get days!" });
       console.log("Error!", err);
+    });
+});
+
+// Register a user
+app.post("/users", (req, res) => {
+  const token = req.headers.authorization.split(/\s+/).pop() || "";
+  const auth = new Buffer.from(token, "base64").toString();
+  const parts = auth.split(":");
+  const email = parts[0];
+  const password = parts[1];
+  const id = uuid();
+  // Check for existing user
+  knex("users")
+    .first()
+    .where({ email })
+    .then(user => {
+      if (user) {
+        res.send({ msg: "A user with that email already exists." });
+      } else {
+        // Hash password
+        bcrypt.hash(password, 10, (err, hash) => {
+          // Insert new user into db
+          knex("users")
+            .insert({ id, email, password: hash })
+            .then(() => res.send({ msg: "Registed user " + email }));
+        });
+      }
     });
 });
 
