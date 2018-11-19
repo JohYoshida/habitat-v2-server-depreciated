@@ -165,7 +165,7 @@ app.post("/habits/:habit/:year", (req, res) => {
     })
     .catch(err => {
       res.send({ msg: "Failed to get days!" });
-      console.log("Error!", err);
+      console.log("Error!", err); 
     });
 });
 
