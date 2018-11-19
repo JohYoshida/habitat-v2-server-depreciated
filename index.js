@@ -10,6 +10,8 @@ const app = express();
 const dbconfig = require("./knexfile.js")[process.env.DB_ENV];
 const knex = require("knex")(dbconfig);
 
+const { handleAuthHeader } = require("./lib/helpers");
+
 // parse application/json
 app.use(bodyParser.json());
 
@@ -165,18 +167,13 @@ app.post("/habits/:habit/:year", (req, res) => {
     })
     .catch(err => {
       res.send({ msg: "Failed to get days!" });
-      console.log("Error!", err); 
+      console.log("Error!", err);
     });
 });
 
 // Register a user
 app.post("/users", (req, res) => {
-  const token = req.headers.authorization.split(/\s+/).pop() || "";
-  const auth = new Buffer.from(token, "base64").toString();
-  const parts = auth.split(":");
-  const email = parts[0];
-  const password = parts[1];
-  const id = uuid();
+  const { email, password } = handleAuthHeader(req.headers.authorization);
   // Check for existing user
   knex("users")
     .first()
@@ -188,6 +185,7 @@ app.post("/users", (req, res) => {
         // Hash password
         bcrypt.hash(password, 10, (err, hash) => {
           // Insert new user into db
+          const id = uuid();
           knex("users")
             .insert({ id, email, password: hash })
             .then(() => res.send({ msg: "Registed user " + email }));
