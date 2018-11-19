@@ -171,6 +171,30 @@ app.post("/habits/:habit/:year", (req, res) => {
     });
 });
 
+// Login as a user
+app.get("/users", (req, res) => {
+  const { email, password } = handleAuthHeader(req.headers.authorization);
+  // Check for existing user
+  knex("users")
+    .first()
+    .where({ email })
+    .then(user => {
+      if (user) {
+        // Check password against hash
+        bcrypt.compare(password, user.password, (err, result) => {
+          if (result) {
+            res.send({ msg: "Credentials verified."});
+          } else {
+            res.send({ msg: "Incorrect email or password."});
+          }
+        })
+      } else {
+        res.send({ msg: "Incorrect email or password." });
+      }
+    })
+});
+
+
 // Register a user
 app.post("/users", (req, res) => {
   const { email, password } = handleAuthHeader(req.headers.authorization);
