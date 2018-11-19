@@ -183,17 +183,20 @@ app.get("/users", (req, res) => {
         // Check password against hash
         bcrypt.compare(password, user.password, (err, result) => {
           if (result) {
-            res.send({ msg: "Credentials verified."});
+            res.send({ msg: "Credentials verified." });
           } else {
-            res.send({ msg: "Incorrect email or password."});
+            res.send({ msg: "Incorrect email or password." });
           }
-        })
+        });
       } else {
         res.send({ msg: "Incorrect email or password." });
       }
     })
+    .catch(err => {
+      res.send({ msg: "Failed to login!" });
+      console.log("Error!", err);
+    });
 });
-
 
 // Register a user
 app.post("/users", (req, res) => {
@@ -215,6 +218,10 @@ app.post("/users", (req, res) => {
             .then(() => res.send({ msg: "Registed user " + email }));
         });
       }
+    })
+    .catch(err => {
+      res.send({ msg: "Failed to register user!" });
+      console.log("Error!", err);
     });
 });
 
