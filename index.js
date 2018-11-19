@@ -1,20 +1,23 @@
+// Server requirements
 const express = require("express");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 const moment = require("moment");
 const uuid = require("uuid/v1");
 const PORT = process.env.PORT || 4000;
-
 const app = express();
 
+// Database requirements
 const dbconfig = require("./knexfile.js")[process.env.DB_ENV];
 const knex = require("knex")(dbconfig);
 
+// Functions
 const { handleAuthHeader } = require("./lib/helpers");
 
 // parse application/json
 app.use(bodyParser.json());
 
+// Home
 app.get("/", (req, res) => {
   res.send("Habitat server");
 });
@@ -23,8 +26,7 @@ app.get("/", (req, res) => {
 app.get("/habits", (req, res) => {
   knex("habits")
     .then(rows => {
-      rows = JSON.stringify(rows);
-      res.send(rows);
+      res.send(JSON.stringify(rows));
     })
     .catch(err => {
       res.send("Failed to get habits!");
@@ -36,7 +38,7 @@ app.get("/habits", (req, res) => {
 // TODO: Change hardcoded user
 app.post("/habits", (req, res) => {
   const now = moment().format();
-  let id = uuid();
+  const id = uuid();
   const { name, color } = req.body;
   knex("habits")
     .insert({
