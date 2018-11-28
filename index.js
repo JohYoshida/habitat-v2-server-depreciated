@@ -185,13 +185,13 @@ app.get("/users", (req, res) => {
         // Check password against hash
         bcrypt.compare(password, user.password, (err, result) => {
           if (result) {
-            res.send({ msg: "Credentials verified." });
+            res.send({ msg: "Credentials verified.", verified: true });
           } else {
-            res.send({ msg: "Incorrect email or password." });
+            res.send({ msg: "Incorrect email or password.", verified: false });
           }
         });
       } else {
-        res.send({ msg: "Incorrect email or password." });
+        res.send({ msg: "Incorrect email or password.", verified: false });
       }
     })
     .catch(err => {
@@ -209,7 +209,10 @@ app.post("/users", (req, res) => {
     .where({ email })
     .then(user => {
       if (user) {
-        res.send({ msg: "A user with that email already exists." });
+        res.send({
+          msg: "A user with that email already exists.",
+          verified: true
+        });
       } else {
         // Hash password
         bcrypt.hash(password, 10, (err, hash) => {
@@ -217,7 +220,9 @@ app.post("/users", (req, res) => {
           const id = uuid();
           knex("users")
             .insert({ id, email, password: hash })
-            .then(() => res.send({ msg: "Registed user " + email }));
+            .then(() =>
+              res.send({ msg: "Registed user " + email, verified: false })
+            );
         });
       }
     })
