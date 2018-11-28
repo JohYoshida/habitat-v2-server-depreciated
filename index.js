@@ -22,9 +22,10 @@ app.get("/", (req, res) => {
   res.send("Habitat server");
 });
 
-// Return an array of habits
-app.get("/habits", (req, res) => {
+// Return an array of habits belonging to a user
+app.get("/habits/:user", (req, res) => {
   knex("habits")
+    .where({ user: req.params.user })
     .then(rows => {
       res.send(JSON.stringify(rows));
     })
@@ -35,7 +36,6 @@ app.get("/habits", (req, res) => {
 });
 
 // Post a new habit
-// TODO: Change hardcoded user
 app.post("/habits", (req, res) => {
   const now = moment().format();
   const { name, color, user } = req.body;
