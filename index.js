@@ -23,9 +23,9 @@ app.get("/", (req, res) => {
 });
 
 // Return an array of habits belonging to a user
-app.get("/habits/:user", (req, res) => {
+app.get("/habits/:user_id", (req, res) => {
   knex("habits")
-    .where({ user: req.params.user })
+    .where({ user_id: req.params.user_id })
     .then(rows => {
       res.send(JSON.stringify(rows));
     })
@@ -38,12 +38,12 @@ app.get("/habits/:user", (req, res) => {
 // Post a new habit
 app.post("/habits", (req, res) => {
   const now = moment().format();
-  const { name, color, user } = req.body;
+  const { name, color, user_id } = req.body;
   let id = uuid();
   knex("habits")
     .insert({
       id,
-      user,
+      user_id,
       name,
       color,
       createdAt: now,
@@ -74,7 +74,7 @@ app.post("/habits", (req, res) => {
             msg: `Created new habit "${name}"`,
             habit: {
               id,
-              user,
+              user_id,
               name,
               color,
               createdAt: now,
@@ -91,9 +91,9 @@ app.post("/habits", (req, res) => {
 
 // Delete a habit
 app.delete("/habits", (req, res) => {
-  const { user, name } = req.body;
+  const { user_id, name } = req.body;
   knex("habits")
-    .where({ user, name })
+    .where({ user_id, name })
     .del()
     .then(() => {
       res.send({ msg: `Deleted habit ${req.body.name}` });
