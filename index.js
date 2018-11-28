@@ -211,7 +211,7 @@ app.post("/users", (req, res) => {
       if (user) {
         res.send({
           msg: "A user with that email already exists.",
-          verified: true
+          verified: false
         });
       } else {
         // Hash password
@@ -221,13 +221,13 @@ app.post("/users", (req, res) => {
           knex("users")
             .insert({ id, email, password: hash })
             .then(() =>
-              res.send({ msg: "Registed user " + email, verified: false })
+              res.send({ msg: "Registed user " + email, verified: true })
             );
         });
       }
     })
     .catch(err => {
-      res.send({ msg: "Failed to register user!" });
+      res.send({ msg: "Failed to register user!", verified: false });
       console.log("Error!", err);
     });
 });
