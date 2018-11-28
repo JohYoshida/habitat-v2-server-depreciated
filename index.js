@@ -185,7 +185,11 @@ app.get("/users", (req, res) => {
         // Check password against hash
         bcrypt.compare(password, user.password, (err, result) => {
           if (result) {
-            res.send({ msg: "Credentials verified.", verified: true });
+            res.send({
+              msg: "Credentials verified.",
+              verified: true,
+              id: user.id
+            });
           } else {
             res.send({ msg: "Incorrect email or password.", verified: false });
           }
