@@ -38,12 +38,12 @@ app.get("/habits", (req, res) => {
 // TODO: Change hardcoded user
 app.post("/habits", (req, res) => {
   const now = moment().format();
-  const id = uuid();
-  const { name, color } = req.body;
+  const { name, color, user } = req.body;
+  let id = uuid();
   knex("habits")
     .insert({
       id,
-      user: "johyoshida@gmail.com",
+      user,
       name,
       color,
       createdAt: now,
@@ -71,10 +71,10 @@ app.post("/habits", (req, res) => {
         })
         .then(() => {
           res.send({
-            msg: `Created newData habit "${name}"`,
+            msg: `Created new habit "${name}"`,
             habit: {
               id,
-              user: "johyoshida@gmail.com",
+              user,
               name,
               color,
               createdAt: now,
