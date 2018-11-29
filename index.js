@@ -23,16 +23,23 @@ app.get("/", (req, res) => {
 });
 
 // Return an array of habits belonging to a user
-app.get("/habits/:user_id", (req, res) => {
-  knex("habits")
-    .where({ user_id: req.params.user_id })
-    .then(rows => {
-      res.send(JSON.stringify(rows));
-    })
-    .catch(err => {
-      res.send("Failed to get habits!");
-      console.log("Error!", err);
-    });
+app.get("/users/:user_id/habits", (req, res) => {
+  checkUserCredentials(req.headers.authorization).then(result => {
+    if (result.id === req.params.user_id && result.verified) {
+      knex("habits")
+        .where({ user_id: req.params.user_id })
+        .then(rows => {
+          res.send(JSON.stringify(rows));
+        })
+        .catch(err => {
+          res.send("Failed to get habits!");
+          console.log("Error!", err);
+        });
+    } else
+      new Promise(function(resolve, reject) {
+        res.send("Failed to get habits!");
+      });
+  });
 });
 
 // Post a new habit
