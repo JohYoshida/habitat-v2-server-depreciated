@@ -43,57 +43,62 @@ app.get("/users/:user_id/habits", (req, res) => {
 });
 
 // Post a new habit
-app.post("/habits", (req, res) => {
+app.post("/users/:user_id/habits", (req, res) => {
   const now = moment().format();
-  const { name, color, user_id } = req.body;
+  const { name, color } = req.body;
+  const { user_id } = req.params;
   let id = uuid();
-  knex("habits")
-    .insert({
-      id,
-      user_id,
-      name,
-      color,
-      createdAt: now,
-      modifiedAt: now
-    })
-    .then(() => {
-      id = uuid();
-      knex("habitCalendars")
+  checkUserCredentials(req.headers.authorization).then(result => {
+    if (result.id === user_id && result.verified) {
+      knex("habits")
         .insert({
           id,
-          habit: name,
-          year: 2018,
-          Jan: "0000000000000000000000000000000",
-          Feb: "00000000000000000000000000000",
-          Mar: "0000000000000000000000000000000",
-          Apr: "000000000000000000000000000000",
-          May: "0000000000000000000000000000000",
-          Jun: "000000000000000000000000000000",
-          Jul: "0000000000000000000000000000000",
-          Aug: "0000000000000000000000000000000",
-          Sep: "000000000000000000000000000000",
-          Oct: "0000000000000000000000000000000",
-          Nov: "000000000000000000000000000000",
-          Dec: "0000000000000000000000000000000"
+          user_id,
+          name,
+          color,
+          createdAt: now,
+          modifiedAt: now
         })
         .then(() => {
-          res.send({
-            msg: `Created new habit "${name}"`,
-            habit: {
+          id = uuid();
+          knex("habitCalendars")
+            .insert({
               id,
-              user_id,
-              name,
-              color,
-              createdAt: now,
-              modifiedAt: now
-            }
-          });
+              habit: name,
+              year: 2018,
+              Jan: "0000000000000000000000000000000",
+              Feb: "00000000000000000000000000000",
+              Mar: "0000000000000000000000000000000",
+              Apr: "000000000000000000000000000000",
+              May: "0000000000000000000000000000000",
+              Jun: "000000000000000000000000000000",
+              Jul: "0000000000000000000000000000000",
+              Aug: "0000000000000000000000000000000",
+              Sep: "000000000000000000000000000000",
+              Oct: "0000000000000000000000000000000",
+              Nov: "000000000000000000000000000000",
+              Dec: "0000000000000000000000000000000"
+            })
+            .then(() => {
+              res.send({
+                msg: `Created new habit "${name}"`,
+                habit: {
+                  id,
+                  user_id,
+                  name,
+                  color,
+                  createdAt: now,
+                  modifiedAt: now
+                }
+              });
+            });
+        })
+        .catch(err => {
+          res.send("Failed to create habit!");
+          console.log("Error!", err);
         });
-    })
-    .catch(err => {
-      res.send("Failed to create habit!");
-      console.log("Error!", err);
-    });
+    }
+  });
 });
 
 // Delete a habit
@@ -185,7 +190,7 @@ app.get("/users", (req, res) => {
   // Check for existing user
   checkUserCredentials(req.headers.authorization).then(result => {
     res.send(result);
-  })
+  });
 });
 
 // Register a user
