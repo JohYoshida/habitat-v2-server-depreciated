@@ -102,17 +102,23 @@ app.post("/users/:user_id/habits", (req, res) => {
 });
 
 // Delete a habit
-app.delete("/habits", (req, res) => {
-  const { user_id, name } = req.body;
-  knex("habits")
-    .where({ user_id, name })
-    .del()
-    .then(() => {
-      res.send({ msg: `Deleted habit ${req.body.name}` });
-    })
-    .catch(err => {
-      console.log("Error!", err);
-    });
+app.delete("/users/:user_id/habits", (req, res) => {
+  const { name } = req.body;
+  const { user_id } = req.params;
+  checkUserCredentials(req.headers.authorization).then(result => {
+    if (result.id === user_id && result.verified) {
+      knex("habits")
+        .where({ user_id, name })
+        .del()
+        .then(() => {
+          res.send({ msg: `Deleted habit ${req.body.name}` });
+        })
+        .catch(err => {
+          console.log("Error!", err);
+          res.send({ msg: "Failed to delete habit" });
+        });
+    }
+  });
 });
 
 // Return a habit calendar
