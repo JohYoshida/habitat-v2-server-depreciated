@@ -121,6 +121,20 @@ app.delete("/users/:user_id/habits", (req, res) => {
   });
 });
 
+app.get("/users/:user_id/habits/:habit_id/:year", (req, res) => {
+  const { user_id, habit_id, year } = req.params;
+  knex("days")
+    .where({ habit_id, year })
+    .then(rows => {
+      rows = JSON.stringify(rows);
+      res.send(rows);
+    })
+    .catch(err => {
+      res.send("Failed to get days!");
+      console.log("Error!", err);
+    });
+});
+
 // Return a habit calendar
 app.get("/habits/:habit/:year", (req, res) => {
   const { habit, year } = req.params;
