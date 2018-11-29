@@ -135,6 +135,28 @@ app.get("/users/:user_id/habits/:habit_id/:year", (req, res) => {
     });
 });
 
+app.post("/users/:user_id/habits/:habit_id/:year", (req, res) => {
+  const { user_id, habit_id, year } = req.params;
+  const { day, month, value } = req.body;
+  const data = {
+    id: uuid(),
+    habit_id,
+    day,
+    month,
+    year,
+    value
+  }
+  knex("days")
+    .insert(data)
+    .then(() => {
+      res.send({ msg: "Created new record for day", data});
+    })
+    .catch(err => {
+      res.send({ msg: "Failed to create day!"});
+      console.log("Error!", err);
+    })
+});
+
 // Return a habit calendar
 app.get("/habits/:habit/:year", (req, res) => {
   const { habit, year } = req.params;
