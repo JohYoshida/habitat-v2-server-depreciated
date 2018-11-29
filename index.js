@@ -12,7 +12,7 @@ const dbconfig = require("./knexfile.js")[process.env.DB_ENV];
 const knex = require("knex")(dbconfig);
 
 // Functions
-const { handleAuthHeader } = require("./lib/helpers");
+const { handleAuthHeader, checkUserCredentials } = require("./lib/helpers");
 
 // parse application/json
 app.use(bodyParser.json());
@@ -175,33 +175,10 @@ app.post("/habits/:habit/:year", (req, res) => {
 
 // Login as a user
 app.get("/users", (req, res) => {
-  const { email, password } = handleAuthHeader(req.headers.authorization);
   // Check for existing user
-  knex("users")
-    .first()
-    .where({ email })
-    .then(user => {
-      if (user) {
-        // Check password against hash
-        bcrypt.compare(password, user.password, (err, result) => {
-          if (result) {
-            res.send({
-              msg: "Credentials verified.",
-              verified: true,
-              id: user.id
-            });
-          } else {
-            res.send({ msg: "Incorrect email or password.", verified: false });
-          }
-        });
-      } else {
-        res.send({ msg: "Incorrect email or password.", verified: false });
-      }
-    })
-    .catch(err => {
-      res.send({ msg: "Failed to login!" });
-      console.log("Error!", err);
-    });
+  checkUserCredentials(req.headers.authorization).then(result => {
+    res.send(result);
+  })
 });
 
 // Register a user
