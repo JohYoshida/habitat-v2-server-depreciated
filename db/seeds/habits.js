@@ -15,7 +15,7 @@ exports.seed = function(knex, Promise) {
     return knex("habits").insert([{
       id: id1,
       user_id: admin_id,
-      name: "Drink water",
+      name: "Drink Water",
       color: "blue",
       createdAt: now,
       modifiedAt: now,
