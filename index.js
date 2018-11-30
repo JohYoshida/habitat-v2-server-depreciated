@@ -151,7 +151,7 @@ app.post("/users/:user_id/habits/:habit_id/:year", (req, res) => {
   knex("days")
     .where({ habit_id, day, month, year })
     .then(rows => {
-      if (!rows) {
+      if (rows.length > 0) {
         knex("days")
           .insert(data)
           .then(() => {
