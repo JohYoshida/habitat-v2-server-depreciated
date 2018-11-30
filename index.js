@@ -161,7 +161,7 @@ app.post("/users/:user_id/habits/:habit_id/:year", (req, res) => {
             res.send({ msg: "Failed to create day!"});
             console.log("Error!", err);
           });
-      } else res.send({ msg: "Record for that day already exists!", data: rows });
+      } else res.send({ msg: "Record for that day already exists!"});
     })
     .catch(err => {
       res.send({ msg: "Failed to get day!"});
