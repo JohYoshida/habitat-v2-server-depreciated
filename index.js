@@ -172,11 +172,11 @@ app.post("/users/:user_id/habits/:habit_id/:year", (req, res) => {
 // Edit a day
 app.post("/users/:user_id/habits/:habit_id/:year/:month/:day", (req, res) => {
   const { user_id, habit_id, year, month, day } = req.params;
-  const { value } = req.body;
+  const { newValue } = req.body;
   knex("days")
     .first()
     .where({ habit_id, day, month, year })
-    .update({ value })
+    .update({ value: newValue })
     .then(() => res.send({ msg: "Successfully updated day."}))
     .catch(err => {
       res.send({ msg: "Failed to update day"});
