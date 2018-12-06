@@ -22,6 +22,46 @@ app.get("/", (req, res) => {
   res.send("Habitat server");
 });
 
+// Login as a user
+app.get("/users", (req, res) => {
+  // Check for existing user
+  checkUserCredentials(req.headers.authorization).then(result => {
+    res.send(result);
+  });
+});
+
+// Register a user
+app.post("/users", (req, res) => {
+  const { email, password } = handleAuthHeader(req.headers.authorization);
+  // Check for existing user
+  knex("users")
+    .first()
+    .where({ email })
+    .then(user => {
+      if (user) {
+        res.send({
+          msg: "A user with that email already exists.",
+          verified: false
+        });
+      } else {
+        // Hash password
+        bcrypt.hash(password, 10, (err, hash) => {
+          // Insert new user into db
+          const id = uuid();
+          knex("users")
+            .insert({ id, email, password: hash })
+            .then(() =>
+              res.send({ msg: "Registed user " + email, verified: true })
+            );
+        });
+      }
+    })
+    .catch(err => {
+      res.send({ msg: "Failed to register user!", verified: false });
+      console.log("Error!", err);
+    });
+});
+
 // Return an array of habits belonging to a user
 app.get("/users/:user_id/habits", (req, res) => {
   checkUserCredentials(req.headers.authorization).then(result => {
@@ -197,6 +237,7 @@ app.delete("/users/:user_id/habits/:habit_id/:year/:month/:day", (req, res) => {
     });
 });
 
+// Routes below this line are depreciated
 // Return a habit calendar
 app.get("/habits/:habit/:year", (req, res) => {
   const { habit, year } = req.params;
@@ -263,46 +304,6 @@ app.post("/habits/:habit/:year", (req, res) => {
     })
     .catch(err => {
       res.send({ msg: "Failed to get days!" });
-      console.log("Error!", err);
-    });
-});
-
-// Login as a user
-app.get("/users", (req, res) => {
-  // Check for existing user
-  checkUserCredentials(req.headers.authorization).then(result => {
-    res.send(result);
-  });
-});
-
-// Register a user
-app.post("/users", (req, res) => {
-  const { email, password } = handleAuthHeader(req.headers.authorization);
-  // Check for existing user
-  knex("users")
-    .first()
-    .where({ email })
-    .then(user => {
-      if (user) {
-        res.send({
-          msg: "A user with that email already exists.",
-          verified: false
-        });
-      } else {
-        // Hash password
-        bcrypt.hash(password, 10, (err, hash) => {
-          // Insert new user into db
-          const id = uuid();
-          knex("users")
-            .insert({ id, email, password: hash })
-            .then(() =>
-              res.send({ msg: "Registed user " + email, verified: true })
-            );
-        });
-      }
-    })
-    .catch(err => {
-      res.send({ msg: "Failed to register user!", verified: false });
       console.log("Error!", err);
     });
 });
