@@ -169,6 +169,19 @@ app.post("/users/:user_id/habits/:habit_id/:year", (req, res) => {
     });
 });
 
+// Delete a day
+app.delete("/users/:user_id/habits/:habit_id/:year/:month/:day", (req, res) => {
+  const { user_id, habit_id, year, month, day } = req.params;
+  knex("days")
+    .where({ habit_id, day, month, year })
+    .del()
+    .then(() => res.send({ msg: "Successfully deleted day."}))
+    .catch(err => {
+      res.send({ msg: "Failed to delete day"});
+      console.log("Error!", err);
+    });
+});
+
 // Return a habit calendar
 app.get("/habits/:habit/:year", (req, res) => {
   const { habit, year } = req.params;
