@@ -99,7 +99,7 @@ app.post("/users/:user_id/habits", (req, res) => {
   checkUserCredentials(req.headers.authorization).then(result => {
     if (result.id === user_id && result.verified) {
       knex("habits")
-        .insert({ habit })
+        .insert(habit)
         .then(() => res.send({ habit, msg: `Created new habit "${name}"` }))
         .catch(err => {
           res.send("Failed to create habit!");
