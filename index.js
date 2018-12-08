@@ -88,51 +88,19 @@ app.post("/users/:user_id/habits", (req, res) => {
   const { name, color } = req.body;
   const { user_id } = req.params;
   let id = uuid();
+  let habit = {
+    id,
+    user_id,
+    name,
+    color,
+    createdAt: now,
+    modifiedAt: now
+  };
   checkUserCredentials(req.headers.authorization).then(result => {
     if (result.id === user_id && result.verified) {
       knex("habits")
-        .insert({
-          id,
-          user_id,
-          name,
-          color,
-          createdAt: now,
-          modifiedAt: now
-        })
-        .then(() => {
-          id = uuid();
-          knex("habitCalendars")
-            .insert({
-              id,
-              habit: name,
-              year: 2018,
-              Jan: "0000000000000000000000000000000",
-              Feb: "00000000000000000000000000000",
-              Mar: "0000000000000000000000000000000",
-              Apr: "000000000000000000000000000000",
-              May: "0000000000000000000000000000000",
-              Jun: "000000000000000000000000000000",
-              Jul: "0000000000000000000000000000000",
-              Aug: "0000000000000000000000000000000",
-              Sep: "000000000000000000000000000000",
-              Oct: "0000000000000000000000000000000",
-              Nov: "000000000000000000000000000000",
-              Dec: "0000000000000000000000000000000"
-            })
-            .then(() => {
-              res.send({
-                msg: `Created new habit "${name}"`,
-                habit: {
-                  id,
-                  user_id,
-                  name,
-                  color,
-                  createdAt: now,
-                  modifiedAt: now
-                }
-              });
-            });
-        })
+        .insert({ habit })
+        .then(() => res.send({ habit, msg: `Created new habit "${name}"` }))
         .catch(err => {
           res.send("Failed to create habit!");
           console.log("Error!", err);
