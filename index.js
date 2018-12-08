@@ -51,7 +51,7 @@ app.post("/users", (req, res) => {
           knex("users")
             .insert({ id, email, password: hash })
             .then(() =>
-              res.send({ msg: "Registed user " + email, verified: true })
+              res.send({ msg: "Registed user " + email, verified: true, id })
             );
         });
       }
