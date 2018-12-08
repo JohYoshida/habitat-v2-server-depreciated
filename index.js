@@ -143,15 +143,28 @@ app.post("/users/:user_id/habits", (req, res) => {
 
 // Delete a habit
 app.delete("/users/:user_id/habits", (req, res) => {
-  const { name } = req.body;
+  const { name, habit_id } = req.body;
   const { user_id } = req.params;
   checkUserCredentials(req.headers.authorization).then(result => {
     if (result.id === user_id && result.verified) {
+      // Delete the habit
       knex("habits")
         .where({ user_id, name })
         .del()
         .then(() => {
-          res.send({ msg: `Deleted habit ${req.body.name}` });
+          // Delete all days associated with habit
+          knex("days")
+            .where({ habit_id })
+            .del()
+            .then(() => {
+              res.send({ msg: `Deleted habit ${req.body.name}` });
+            })
+            .catch(err => {
+              console.log("Error!", err);
+              res.send({
+                msg: "Failed to delete days associated with habit habit"
+              });
+            });
         })
         .catch(err => {
           console.log("Error!", err);
@@ -171,7 +184,7 @@ app.get("/users/:user_id/habits/:habit_id/:year", (req, res) => {
       res.send(rows);
     })
     .catch(err => {
-      res.send({ msg: "Failed to get days!"});
+      res.send({ msg: "Failed to get days!" });
       console.log("Error!", err);
     });
 });
@@ -187,7 +200,7 @@ app.post("/users/:user_id/habits/:habit_id/:year", (req, res) => {
     month,
     year,
     value
-  }
+  };
   knex("days")
     .where({ habit_id, day, month, year })
     .then(rows => {
@@ -195,16 +208,16 @@ app.post("/users/:user_id/habits/:habit_id/:year", (req, res) => {
         knex("days")
           .insert(data)
           .then(() => {
-            res.send({ msg: "Created new record for day", data});
+            res.send({ msg: "Created new record for day", data });
           })
           .catch(err => {
-            res.send({ msg: "Failed to create day!"});
+            res.send({ msg: "Failed to create day!" });
             console.log("Error!", err);
           });
-      } else res.send({ msg: "Record for that day already exists!"});
+      } else res.send({ msg: "Record for that day already exists!" });
     })
     .catch(err => {
-      res.send({ msg: "Failed to get day!"});
+      res.send({ msg: "Failed to get day!" });
       console.log("Error!", err);
     });
 });
@@ -217,9 +230,9 @@ app.post("/users/:user_id/habits/:habit_id/:year/:month/:day", (req, res) => {
     .first()
     .where({ habit_id, day, month, year })
     .update({ value: newValue })
-    .then(() => res.send({ msg: "Successfully updated day."}))
+    .then(() => res.send({ msg: "Successfully updated day." }))
     .catch(err => {
-      res.send({ msg: "Failed to update day"});
+      res.send({ msg: "Failed to update day" });
       console.log("Error!", err);
     });
 });
@@ -230,9 +243,9 @@ app.delete("/users/:user_id/habits/:habit_id/:year/:month/:day", (req, res) => {
   knex("days")
     .where({ habit_id, day, month, year })
     .del()
-    .then(() => res.send({ msg: "Successfully deleted day."}))
+    .then(() => res.send({ msg: "Successfully deleted day." }))
     .catch(err => {
-      res.send({ msg: "Failed to delete day"});
+      res.send({ msg: "Failed to delete day" });
       console.log("Error!", err);
     });
 });
