@@ -107,5 +107,38 @@ module.exports = () => {
       });
   });
 
+  // Post a new day
+  habitsRouter.post("/:user_id/:habit_id/:year", (req, res) => {
+    const { user_id, habit_id, year } = req.params;
+    const { day, month, value } = req.body;
+    const data = {
+      id: uuid(),
+      habit_id,
+      day,
+      month,
+      year,
+      value
+    };
+    knex("days")
+      .where({ habit_id, day, month, year })
+      .then(rows => {
+        if (!rows.length) {
+          knex("days")
+            .insert(data)
+            .then(() => {
+              res.send({ msg: "Created new record for day", data });
+            })
+            .catch(err => {
+              res.send({ msg: "Failed to create day!" });
+              console.log("Error!", err);
+            });
+        } else res.send({ msg: "Record for that day already exists!" });
+      })
+      .catch(err => {
+        res.send({ msg: "Failed to get day!" });
+        console.log("Error!", err);
+      });
+  });
+
   return habitsRouter;
 }
