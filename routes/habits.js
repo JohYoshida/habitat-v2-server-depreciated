@@ -59,5 +59,38 @@ module.exports = () => {
     });
   });
 
+  // Delete a habit
+  habitsRouter.delete("/:user_id", (req, res) => {
+    let { name, habit_id } = req.body;
+    const { user_id } = req.params;
+    checkUserCredentials(req.headers.authorization).then(result => {
+      if (result.id === user_id && result.verified) {
+        // Delete the habit
+        knex("habits")
+          .where({ user_id, name })
+          .del()
+          .then(() => {
+            // Delete all days associated with habit
+            knex("days")
+              .where({ habit_id })
+              .del()
+              .then(() => {
+                res.send({ msg: `Deleted habit ${name}` });
+              })
+              .catch(err => {
+                console.log("Error!", err);
+                res.send({
+                  msg: "Failed to delete days associated with habit habit"
+                });
+              });
+          })
+          .catch(err => {
+            console.log("Error!", err);
+            res.send({ msg: "Failed to delete habit" });
+          });
+      }
+    });
+  });
+
   return habitsRouter;
 }
