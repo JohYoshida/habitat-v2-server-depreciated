@@ -140,5 +140,20 @@ module.exports = () => {
       });
   });
 
+  // Edit a day
+  habitsRouter.post("/:user_id/:habit_id/:year/:month/:day", (req, res) => {
+    const { user_id, habit_id, year, month, day } = req.params;
+    const { newValue } = req.body;
+    knex("days")
+      .first()
+      .where({ habit_id, day, month, year })
+      .update({ value: newValue })
+      .then(() => res.send({ msg: "Successfully updated day." }))
+      .catch(err => {
+        res.send({ msg: "Failed to update day" });
+        console.log("Error!", err);
+      });
+  });
+
   return habitsRouter;
 }
