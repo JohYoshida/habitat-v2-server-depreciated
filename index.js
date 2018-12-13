@@ -11,11 +11,16 @@ const app = express();
 const dbconfig = require("./knexfile.js")[process.env.DB_ENV];
 const knex = require("knex")(dbconfig);
 
+// Router requirements
+const habitsRouter = require("./routes/habits")(knex);
+
 // Functions
 const { handleAuthHeader, checkUserCredentials } = require("./lib/helpers");
 
 // parse application/json
 app.use(bodyParser.json());
+
+app.use("/users/habits", habitsRouter);
 
 // Home
 app.get("/", (req, res) => {
