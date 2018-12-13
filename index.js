@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 const moment = require("moment");
 const uuid = require("uuid/v1");
+const path = require("path");
 const PORT = process.env.PORT || 4000;
 const app = express();
 
@@ -17,6 +18,10 @@ const habitsRouter = require("./routes/habits")(knex);
 // Functions
 const { handleAuthHeader, checkUserCredentials } = require("./lib/helpers");
 
+// View engine
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
+
 // parse application/json
 app.use(bodyParser.json());
 
@@ -24,7 +29,7 @@ app.use("/users/habits", habitsRouter);
 
 // Home
 app.get("/", (req, res) => {
-  res.send("Habitat server");
+  res.render("index");
 });
 
 // Login as a user
