@@ -13,6 +13,7 @@ const dbconfig = require("./knexfile.js")[process.env.DB_ENV];
 const knex = require("knex")(dbconfig);
 
 // Router requirements
+const adminRoutes = require("./routes/admin")(knex);
 const habitsRouter = require("./routes/habits")(knex);
 
 // Functions
@@ -25,6 +26,7 @@ app.set("view engine", "ejs");
 // parse application/json
 app.use(bodyParser.json());
 
+app.use("/admin", adminRoutes);
 app.use("/users/habits", habitsRouter);
 
 // Home
