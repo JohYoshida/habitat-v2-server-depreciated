@@ -92,5 +92,20 @@ module.exports = () => {
     });
   });
 
+  // Get days in a year
+  habitsRouter.get("/:user_id/:habit_id/:year", (req, res) => {
+    const { user_id, habit_id, year } = req.params;
+    knex("days")
+      .where({ habit_id, year })
+      .then(rows => {
+        rows = JSON.stringify(rows);
+        res.send(rows);
+      })
+      .catch(err => {
+        res.send({ msg: "Failed to get days!" });
+        console.log("Error!", err);
+      });
+  });
+
   return habitsRouter;
 }
