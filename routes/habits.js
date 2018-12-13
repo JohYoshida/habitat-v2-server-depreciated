@@ -155,5 +155,18 @@ module.exports = () => {
       });
   });
 
+  // Delete a day
+  habitsRouter.delete("/:user_id/:habit_id/:year/:month/:day", (req, res) => {
+    const { user_id, habit_id, year, month, day } = req.params;
+    knex("days")
+      .where({ habit_id, day, month, year })
+      .del()
+      .then(() => res.send({ msg: "Successfully deleted day." }))
+      .catch(err => {
+        res.send({ msg: "Failed to delete day" });
+        console.log("Error!", err);
+      });
+  });
+
   return habitsRouter;
 }
