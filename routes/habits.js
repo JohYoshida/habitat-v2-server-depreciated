@@ -61,7 +61,7 @@ module.exports = () => {
 
   // Delete a habit
   habitsRouter.delete("/:user_id", (req, res) => {
-    let { name, habit_id } = req.body;
+    const { name, habit_id } = req.body;
     const { user_id } = req.params;
     checkUserCredentials(req.headers.authorization).then(result => {
       if (result.id === user_id && result.verified) {
