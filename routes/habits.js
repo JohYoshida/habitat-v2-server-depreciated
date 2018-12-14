@@ -169,4 +169,4 @@ module.exports = () => {
   });
 
   return habitsRouter;
-}
+};
