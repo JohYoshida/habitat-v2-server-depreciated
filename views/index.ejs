@@ -3,8 +3,16 @@
   <head>
     <meta charset="utf-8">
     <title>Habitat Server</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   </head>
   <body>
-    <p>Habitat server</p>
+    <% if (!isLoggedIn) { %>
+      <% include partials/userAuth %>
+    <% } else { %>
+      <div>
+        <input value="Logout" type="submit" id="logout" />
+      </div>
+    <% } %>
   </body>
+  <script type="text/javascript" src="./scripts/login.js"></script>
 </html>
