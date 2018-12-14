@@ -4,7 +4,9 @@ const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 const moment = require("moment");
 const uuid = require("uuid/v1");
+const cookieSession = require("cookie-session");
 const path = require("path");
+
 const PORT = process.env.PORT || 4000;
 const app = express();
 
@@ -23,15 +25,28 @@ const { handleAuthHeader, checkUserCredentials } = require("./lib/helpers");
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
-// parse application/json
+// Use public folder assets
+app.use(express.static("public"));
+
+// Parse application/json
 app.use(bodyParser.json());
 
+// Cookie Session
+app.use(cookieSession({
+  name: 'session',
+  keys: ["secret"],
+}));
+
+// Routers
 app.use("/admin", adminRoutes);
 app.use("/users/habits", habitsRouter);
 
+// ROUTES
+
 // Home
 app.get("/", (req, res) => {
-  res.render("index");
+  const { isLoggedIn } = req.session;
+  res.render("index", { isLoggedIn });
 });
 
 // Login as a user
