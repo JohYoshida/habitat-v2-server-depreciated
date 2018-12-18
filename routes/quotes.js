@@ -15,7 +15,7 @@ module.exports = () => {
     checkUserCredentials(req.headers.authorization).then(user => {
       if (user.id === user_id && user.verified) {
         knex("quotes")
-          .where({ user_id: req.params.user_id })
+          .where({ user_id })
           .then(rows => {
             res.send(JSON.stringify(rows));
           })
@@ -24,7 +24,7 @@ module.exports = () => {
             console.log("Error!", err);
           });
       } else {
-        new Promise((resolve, reject) => {
+        new Promise(function(resolve, reject) {
           res.send("Failed to get quotes!");
         })
       }
