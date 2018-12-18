@@ -20,7 +20,7 @@ module.exports = () => {
             res.send(JSON.stringify(rows));
           })
           .catch(err => {
-            res.send("Failed to get quotes!", err);
+            res.send("Failed to get quotes!");
             console.log("Error!", err);
           });
       } else {
