@@ -89,5 +89,26 @@ module.exports = () => {
     });
   });
 
+  // Delete a quote
+  quotesRoutes.delete("/:user_id/:quote_id", (req, res) => {
+    const { user_id, quote_id } = req.params;
+    checkUserCredentials(req.headers.authorization).then(user => {
+      if (user.id === user_id && user.verified) {
+        knex("quotes")
+          .where({ user_id, id: quote_id })
+          .del()
+          .then(rows => res.send({ msg: "Successfully deleted quote" }))
+          .catch(err => {
+            res.send({ msg: "Failed to delete quote!" });
+            console.log("Error", err);
+          });
+      } else {
+        new Promise((resolve, reject) => {
+          res.send({ msg: "Authentication failed" });
+        });
+      }
+    });
+  })
+
   return quotesRoutes;
 };
