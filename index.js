@@ -116,6 +116,29 @@ app.post("/users/:user_id/habits", (req, res) => {
   });
 });
 
+// Edit a habit
+app.post("/users/:user_id/habits/:habit_id", (req, res) => {
+  const modifiedAt = moment().format();
+  const { name, color } = req.body;
+  const { user_id, habit_id } = req.params;
+  checkUserCredentials(req.headers.authorization).then(result => {
+    if (result.id === user_id && result.verified) {
+      knex("habits")
+        .where({ user_id, id: habit_id })
+        .update({ modifiedAt, name, color })
+        .then(() => res.send({ msg: `Updated habit "${name}"` }))
+        .catch(err => {
+          res.send("Failed to update habit!");
+          console.log("Error!", err);
+        });
+    } else {
+      new Promise((resolve, reject) => {
+        res.send({ msg: "Authentication failed" });
+      });
+    }
+  });
+});
+
 // Delete a habit
 app.delete("/users/:user_id/habits", (req, res) => {
   const { name, habit_id } = req.body;
