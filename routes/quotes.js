@@ -38,7 +38,7 @@ module.exports = () => {
   quotesRoutes.post("/:user_id", (req, res) => {
     const now = moment().format();
     const id = uuid();
-    const { text, author, source } = req.body;
+    const { text, author, source, tags } = req.body;
     const { user_id } = req.params;
     let quote = {
       id,
@@ -46,6 +46,7 @@ module.exports = () => {
       text,
       author,
       source,
+      tags,
       createdAt: now,
       modifiedAt: now
     };
@@ -70,12 +71,12 @@ module.exports = () => {
   quotesRoutes.post("/:user_id/:quote_id", (req, res) => {
     const modifiedAt = moment().format();
     const { user_id, quote_id } = req.params;
-    const { text, author, source } = req.body;
+    const { text, author, source, tags } = req.body;
     checkUserCredentials(req.headers.authorization).then(user => {
       if (user.id === user_id && user.verified) {
         knex("quotes")
           .where({ user_id, id: quote_id })
-          .update({ text, author, source, modifiedAt })
+          .update({ text, author, source, modifiedAt, tags })
           .then(rows => res.send({ msg: "Successfully edited quote" }))
           .catch(err => {
             res.send({ msg: "Failed to edit quote!" });
