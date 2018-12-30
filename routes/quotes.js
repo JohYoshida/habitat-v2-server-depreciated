@@ -37,16 +37,15 @@ module.exports = () => {
   // Post a new quote
   quotesRoutes.post("/:user_id", (req, res) => {
     const now = moment().format();
-    const id = uuid();
+    const quote_id = uuid();
     const { text, author, source, tags } = req.body;
     const { user_id } = req.params;
     let quote = {
-      id,
+      id: quote_id,
       user_id,
       text,
       author,
       source,
-      tags,
       createdAt: now,
       modifiedAt: now
     };
@@ -54,7 +53,35 @@ module.exports = () => {
       if (user.id === user_id && user.verified) {
         knex("quotes")
           .insert(quote)
-          .then(() => res.send({ quote, msg: "Created new quote." }))
+          .then(() => {
+            tags.forEach(tag => {
+              knex("tags")
+                .where({ tag })
+                .then(res => {
+                  const quote_tag_id = uuid();
+                  if (res.length) {
+                    // Tag exists, so make junction relating tag and quote
+                    knex("quote_tags")
+                      .insert({ id: quote_tag_id, quote_id, tag_id: res.id })
+                      .then(res.send({ quote, msg: "Created new quote" }));
+                  } else {
+                    // Tag doesn't exist, insert tag and junction
+                    const tag_id = uuid();
+                    knex("tags")
+                      .insert({ id: tag_id, tag })
+                      .then(() => {
+                        knex("quote_tags")
+                          .insert({
+                            id: quote_tag_id,
+                            quote_id,
+                            tag_id: res.id
+                          })
+                          .then(res.send({ quote, msg: "Created new quote" }));
+                      });
+                  }
+                });
+            });
+          })
           .catch(err => {
             res.send({ msg: "Failed to create quote!" });
             console.log("Error", err);
@@ -109,7 +136,7 @@ module.exports = () => {
         });
       }
     });
-  })
+  });
 
   return quotesRoutes;
 };
