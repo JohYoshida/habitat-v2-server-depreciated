@@ -62,7 +62,7 @@ module.exports = () => {
                   if (res.length) {
                     // Tag exists, so make junction relating tag and quote
                     knex("quote_tags")
-                      .insert({ id: quote_tag_id, quote_id, tag_id: res.id })
+                      .insert({ id: quote_tag_id, quote_id, tag_id: res[0].id })
                       .then(res.send({ quote, msg: "Created new quote" }));
                   } else {
                     // Tag doesn't exist, insert tag and junction
