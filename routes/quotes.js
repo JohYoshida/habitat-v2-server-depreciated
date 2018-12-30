@@ -74,7 +74,7 @@ module.exports = () => {
                           .insert({
                             id: quote_tag_id,
                             quote_id,
-                            tag_id: res.id
+                            tag_id
                           })
                           .then(res.send({ quote, msg: "Created new quote" }));
                       });
