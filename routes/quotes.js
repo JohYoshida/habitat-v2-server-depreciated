@@ -20,41 +20,7 @@ module.exports = () => {
         knex("quotes")
           .where({ user_id })
           .then(rows => {
-            let quotes = [];
-            new Promise((resolve, reject) => {
-              rows.forEach(quote => {
-                quote.tags = [];
-                knex("quote_tags")
-                  .where({ quote_id: quote.id })
-                  .then(rows => {
-                    if (rows.length) {
-                      new Promise((resolve, reject) => {
-                        rows.forEach(row => {
-                        knex("tags")
-                          .where({ id: row.tag_id })
-                          .first()
-                          .then(tag => {
-                            quote.tags.push(tag);
-                            resolve();
-                          })
-                          .catch(err => {
-                            res.send("Failed to get quote_tags!");
-                            console.log("Error!", err);
-                            reject();
-                          });
-                        });
-                      }).then(() => {
-                        quotes.push(quote);
-                        resolve();
-                      })
-                    } else resolve();
-                  })
-                  .catch(err => {
-                    res.send("Failed to get quote_tags!");
-                    console.log("Error!", err);
-                  });
-              });
-            }).then(() => res.send(JSON.stringify(quotes)));
+            res.send(JSON.stringify(rows));
           })
           .catch(err => {
             res.send("Failed to get quotes!");
