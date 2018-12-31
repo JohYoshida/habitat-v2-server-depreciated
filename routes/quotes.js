@@ -42,7 +42,7 @@ module.exports = () => {
                           });
                       });
                       quotes.push(quote);
-                    }
+                    } else resolve();
                   })
                   .catch(err => {
                     res.send("Failed to get quote_tags!");
