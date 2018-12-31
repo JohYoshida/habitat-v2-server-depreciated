@@ -57,12 +57,13 @@ module.exports = () => {
             tags.forEach(tag => {
               knex("tags")
                 .where({ tag })
+                .first()
                 .then(res => {
                   const quote_tag_id = uuid();
-                  if (res.length) {
+                  if (res) {
                     // Tag exists, so make junction relating tag and quote
                     knex("quote_tags")
-                      .insert({ id: quote_tag_id, quote_id, tag_id: res[0].id })
+                      .insert({ id: quote_tag_id, quote_id, tag_id: res.id })
                       .then(res.send({ quote, msg: "Created new quote" }));
                   } else {
                     // Tag doesn't exist, insert tag and junction
