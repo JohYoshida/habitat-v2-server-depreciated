@@ -20,7 +20,36 @@ module.exports = () => {
         knex("quotes")
           .where({ user_id })
           .then(rows => {
-            res.send(JSON.stringify(rows));
+            let quotes = [];
+            new Promise((resolve, reject) => {
+              rows.forEach(quote => {
+                quote.tags = [];
+                knex("quote_tags")
+                  .where({ quote_id: quote.id })
+                  .then(rows => {
+                    if (rows.length) {
+                      rows.forEach(row => {
+                        knex("tags")
+                          .where({ id: row.tag_id })
+                          .first()
+                          .then(tag => {
+                            quote.tags.push(tag);
+                            resolve();
+                          })
+                          .catch(err => {
+                            res.send("Failed to get quote_tags!");
+                            console.log("Error!", err);
+                          });
+                      });
+                      quotes.push(quote);
+                    }
+                  })
+                  .catch(err => {
+                    res.send("Failed to get quote_tags!");
+                    console.log("Error!", err);
+                  });
+              });
+            }).then(() => res.send(JSON.stringify(quotes)));
           })
           .catch(err => {
             res.send("Failed to get quotes!");
@@ -58,12 +87,12 @@ module.exports = () => {
               knex("tags")
                 .where({ tag })
                 .first()
-                .then(res => {
+                .then(row => {
                   const quote_tag_id = uuid();
-                  if (res) {
+                  if (row) {
                     // Tag exists, so make junction relating tag and quote
                     knex("quote_tags")
-                      .insert({ id: quote_tag_id, quote_id, tag_id: res.id })
+                      .insert({ id: quote_tag_id, quote_id, tag_id: row.id })
                       .then(res.send({ quote, msg: "Created new quote" }));
                   } else {
                     // Tag doesn't exist, insert tag and junction
