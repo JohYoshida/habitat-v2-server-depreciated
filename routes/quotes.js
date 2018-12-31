@@ -28,7 +28,8 @@ module.exports = () => {
                   .where({ quote_id: quote.id })
                   .then(rows => {
                     if (rows.length) {
-                      rows.forEach(row => {
+                      new Promise((resolve, reject) => {
+                        rows.forEach(row => {
                         knex("tags")
                           .where({ id: row.tag_id })
                           .first()
@@ -39,9 +40,13 @@ module.exports = () => {
                           .catch(err => {
                             res.send("Failed to get quote_tags!");
                             console.log("Error!", err);
+                            reject();
                           });
-                      });
-                      quotes.push(quote);
+                        });
+                      }).then(() => {
+                        quotes.push(quote);
+                        resolve();
+                      })
                     } else resolve();
                   })
                   .catch(err => {
